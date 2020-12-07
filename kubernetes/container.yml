@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: staging-deployment
+  labels:
+    app: staging
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxUnavailable: 50%
+        maxSurge: 1
+  replicas: 4
+  selector:
+    matchLabels:
+      app: staging
+  template:
+    metadata:
+      labels:
+        app: staging
+    spec:
+      containers:
+        - name: staging
+          imagePullPolicy: Always
+          image: IMAGE
+          ports:
+            - containerPort: 80
+          readinessProbe:
+              httpGet:
+                path: /
+                port: 8080
+              periodSeconds: 10
+              timeoutSeconds: 5
+              successThreshold: 1
+              failureThreshold: 10
