@@ -19,4 +19,4 @@ kubectl get pods
 
 # Step 4:
 # Forward the container port to a host
-kubectl port-forward apacheapp 80:8080
+kubectl port-forward demo-java 80:8080
