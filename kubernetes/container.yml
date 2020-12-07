@@ -27,7 +27,7 @@ spec:
             - containerPort: 8080
           readinessProbe:
               httpGet:
-                path: /
+                path: /sample/hello
                 port: 80
               periodSeconds: 10
               timeoutSeconds: 5
