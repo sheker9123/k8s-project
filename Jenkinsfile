@@ -1,30 +1,35 @@
-pipeline {
-    agent any
-    environment {
-        registry = "sheker9123/demo-java"
-        registryCredential = 'dockerhub'
-        dockerImage = ''
+pipeline { 
+    environment { 
+        registry = "sheker9123/demo-java" 
+        registryCredential = 'dockerhub' 
+        dockerImage = '' 
     }
-    stages {
-        stage('Building image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
+    agent any 
+    stages { 
+        stage('Cloning our Git') { 
+            steps { 
+                git 'https://github.com/sheker9123/k8s-project.git' 
             }
+        } 
+        stage('Building our image') { 
+            steps { 
+                script { 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                }
+            } 
         }
-        stage('Upload Image to Docker hub') {
-            steps{
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
+        stage('Deploy our image') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
                     }
-                }
+                } 
             }
-        }
-        stage('Remove Unused docker image') {
-            steps{
-                sh "docker rmi $registry:$BUILD_NUMBER"
+        } 
+        stage('Cleaning up') { 
+            steps { 
+                sh "docker rmi $registry:$BUILD_NUMBER" 
             }
         }
         stage('Update Kube Config'){
@@ -45,4 +50,3 @@ pipeline {
         }
     }
 }
-    
